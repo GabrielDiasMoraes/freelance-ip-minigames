@@ -80,6 +80,7 @@ namespace DailySolutions.AssetFinder.GameHierarchy
 
         private static bool CheckIfGameObjectHasReference(Object pObject)
         {
+            if (pObject == null) return false;
             bool value = false;
             serializedComponent = new SerializedObject(pObject);
             propIterator = serializedComponent.GetIterator();

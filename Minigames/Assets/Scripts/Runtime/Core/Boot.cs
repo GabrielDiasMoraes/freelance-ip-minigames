@@ -5,17 +5,17 @@ namespace Minigames
 {
     public class Boot : MonoBehaviour
     {
-        private GameFlowController _gameFlowController;
+        private GameData _gameData;
 
         [Inject]
-        public void Constructor(GameFlowController gameFlowController)
+        public void Constructor(GameData gameData)
         {
-            _gameFlowController = gameFlowController;
+            _gameData = gameData;
         }
 
         private void Start()
         {
-            _gameFlowController.GameState = GameState.Boot;
+            _gameData.OnChangeGameState?.Invoke(GameState.PlayerSelection);
         }
     }
 }

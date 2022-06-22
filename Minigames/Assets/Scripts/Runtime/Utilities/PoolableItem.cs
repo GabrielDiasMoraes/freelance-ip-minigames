@@ -13,9 +13,18 @@ namespace Minigames
             _pool = pool;
         }
 
-        private void OnDisable()
+        public virtual void Init()
         {
-            _pool.ReturnToPool(this);
+            gameObject.SetActive(true);
+            enabled = true;
+        }
+        protected virtual void OnDisable()
+        {
+            if (_pool != null)
+            {
+                _pool.ReturnToPool(this);
+            }
+            gameObject.SetActive(false);
         }
     }
 }

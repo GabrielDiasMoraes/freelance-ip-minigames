@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Minigames
 {
-    public class PlayerSelectionView : MonoBehaviour
+    public class PlayerSelectionView : ViewBase<PlayerSelectionViewData>
     {
         [SerializeField] private PlayerCard _playerCardPrefab;
         [SerializeField] private Transform _playerListRoot;
@@ -29,28 +29,28 @@ namespace Minigames
         }
 #endif
 
-        private void Awake()
+        public override void CloseView()
         {
-            _cardPool = new PoolUtility(_playerCardPrefab, 5, _playerListRoot);
-            _activeCards = new List<PlayerCard>();
+            gameObject.SetActive(false);
         }
 
-        public void OpenView()
-        {
-            gameObject.SetActive(true);
-        }
-
-        public void CloseView()
+        public override void OpenView()
         {
             gameObject.SetActive(true);
         }
 
-        public void UpdateView(PlayerSelectionViewData viewData)
+        public override void UpdateView(PlayerSelectionViewData viewData)
         {
             ConfigurePlayerCards(viewData);
             ConfigureButtons(viewData);
             _playerCount.text = viewData.PlayersInfo.Length.ToString();
 
+        }
+
+        private void Awake()
+        {
+            _cardPool = new PoolUtility(_playerCardPrefab, 5, _playerListRoot);
+            _activeCards = new List<PlayerCard>();
         }
 
         private void ClearCards()

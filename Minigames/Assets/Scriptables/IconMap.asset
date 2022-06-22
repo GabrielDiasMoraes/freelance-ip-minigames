@@ -14,14 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerIcons:
   - Key: 0
-    Value: {fileID: 21300000, guid: ed3b4c75a68320349a9f4481bab4876c, type: 3}
+    Value: {fileID: 21300000, guid: a0e86549aa6975546ac2fbdb5abe421b, type: 3}
   - Key: 1
-    Value: {fileID: 21300000, guid: f7420318a046742439fc1f7e0fb33dc7, type: 3}
+    Value: {fileID: 21300000, guid: fe81c51ad7273814ba37acb6904a9a51, type: 3}
   - Key: 2
-    Value: {fileID: 21300000, guid: cdcc1931095dc8544b4ab733bf2b3fde, type: 3}
+    Value: {fileID: 21300000, guid: 32338e7ab4fa34f4e8cbda162fd5f6fa, type: 3}
   - Key: 3
-    Value: {fileID: 21300000, guid: 7cd59d7fb38a77f4ca92099e8d101b73, type: 3}
+    Value: {fileID: 21300000, guid: 7aa3f78f6505fa845a64210251c2fc91, type: 3}
   - Key: 4
-    Value: {fileID: 21300000, guid: 0b216ed8876b73945ad75ea6feaba010, type: 3}
+    Value: {fileID: 21300000, guid: 13ef0f0c5b4ec954da06f6f209a1f99a, type: 3}
   - Key: 5
-    Value: {fileID: 21300000, guid: 7ff78b329f164464ea5df9a3227b3f0d, type: 3}
+    Value: {fileID: 21300000, guid: 18430f4517219354a807678ff6e9beb5, type: 3}
+  _playerBackground:
+  - Key: 0
+    Value: {fileID: 21300000, guid: 4ad4ac33214e686468187e4bf1bd1621, type: 3}
+  - Key: 1
+    Value: {fileID: 21300000, guid: c41f3809f74866c4d8eafac95dc74af3, type: 3}
+  - Key: 2
+    Value: {fileID: 21300000, guid: ec81a5f86f82eaf4786b4d968242e087, type: 3}
+  - Key: 3
+    Value: {fileID: 21300000, guid: bb457fdb3d9a2cf419bab65444802dd8, type: 3}
+  - Key: 4
+    Value: {fileID: 21300000, guid: 1ea9f4039bebf564a95f88fcd241db19, type: 3}
+  - Key: 5
+    Value: {fileID: 21300000, guid: f749d6f5fe71dcf48beb9d9045cee173, type: 3}

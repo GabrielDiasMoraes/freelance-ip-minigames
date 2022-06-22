@@ -14,6 +14,9 @@ namespace Minigames
 
         public void Configure(Sprite playerIcon, string playerName, UnityAction<int, string> onNameChange, int playerID = -1)
         {
+            _onNameChange = null;
+            _onNameChange += onNameChange;
+
             _playerIcon.sprite = playerIcon;
             _playerName.text = playerName;
             _playerName.onEndEdit.RemoveAllListeners();

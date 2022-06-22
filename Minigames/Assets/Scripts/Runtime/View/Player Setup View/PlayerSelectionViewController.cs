@@ -18,10 +18,16 @@ namespace Minigames
             _playerViewData = new PlayerSelectionViewData();
 
             _playerSelectionController.OnEnable += OnControllerEnable;
+            _playerSelectionController.OnDispatch += OnControllerDispatch;
             _playerSelectionController.OnPlayerListChange += OnPlayerListChange;
             _playerViewData.OnPlusClicked += _playerSelectionController.AddNewPlayer;
             _playerViewData.OnMinusClicked += _playerSelectionController.RemovePlayer;
-            //_playerViewData.OnConfirmClicked += _playerSelectionController.ChangePhase;
+            _playerViewData.OnConfirmClicked += _playerSelectionController.Continue;
+        }
+
+        private void OnControllerDispatch()
+        {
+            _view.CloseView();
         }
 
         private void OnPlayerListChange()
@@ -48,7 +54,7 @@ namespace Minigames
                 PlayerInfo playerInfo = _playerViewData.PlayersInfo[i];
                 PlayerData playerData = players[i];
 
-                if (!_iconMap.TryGetPlayerIcon(playerData.ID, out var sprite))
+                if (!_iconMap.PlayerIcons.TryGetValue(playerData.ID, out var sprite))
                 {
                     throw new Exception("No Icon for that Player ID");
                 }
@@ -56,8 +62,10 @@ namespace Minigames
                 playerInfo.PlayerID = playerData.ID;
                 playerInfo.PlayerName = playerData.Name;
                 playerInfo.PlayerIcon = sprite;
+                playerInfo.OnChangeText += _playerSelectionController.UpdatePlayerName;
                 _playerViewData.PlayersInfo[i] = playerInfo;
             }
         }
+
     }
 }

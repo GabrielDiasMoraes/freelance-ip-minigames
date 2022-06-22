@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace Minigames
 {
@@ -7,13 +8,15 @@ namespace Minigames
     {
         private readonly Stack<PoolableItem> _poolStack;
         private readonly PoolableItem _referenceItem;
-        private readonly Transform parent;
+        private readonly Transform _parent;
+        private readonly DiContainer _diContainer;
 
-        public PoolUtility(PoolableItem referenceItem, int amount = 0, Transform parent = null)
+        public PoolUtility(PoolableItem referenceItem, int amount = 0, Transform parent = null, DiContainer diContainer = null)
         {
             _poolStack = new Stack<PoolableItem>();
             _referenceItem = referenceItem;
-            this.parent = parent;
+            this._parent = parent;
+            _diContainer = diContainer;
             for (int i = 0; i < amount; i++)
             {
                 _poolStack.Push(Instantiate());
@@ -22,18 +25,33 @@ namespace Minigames
 
         private PoolableItem Instantiate()
         {
-            var newPoolItem = Object.Instantiate(_referenceItem, parent);
-            newPoolItem.SetupPool(this);
-            return newPoolItem;
+            PoolableItem newItem = null;
+            if (_diContainer == null)
+            {
+                newItem = GameObject.Instantiate(_referenceItem, _parent);
+            }
+            else
+            {
+                newItem = _diContainer.InstantiatePrefabForComponent<PoolableItem>(_referenceItem, _parent);
+            }
+            newItem.SetupPool(this);
+            return newItem;
         }
 
         public PoolableItem GetFromPool()
         {
-            if(_poolStack.TryPop(out var item))
+            if (!_poolStack.TryPop(out var item))
             {
-                return item;
+                item = Instantiate();
             }
-            return Instantiate();
+            item.Init();
+            item.transform.SetParent(_parent);
+            return item;
+        }
+
+        public T GetFromPool<T>() where T : PoolableItem
+        {
+            return (T)GetFromPool();
         }
 
         public void ReturnToPool(PoolableItem item)

@@ -5,7 +5,7 @@ using UnityEngine.Events;
 namespace Minigames
 {
     [Serializable]
-    public struct PlayerSelectionViewData
+    public struct PlayerSelectionViewData : IViewData
     {
         public PlayerInfo[] PlayersInfo;
         public UnityAction OnPlusClicked;

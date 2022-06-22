@@ -11,33 +11,40 @@ namespace Minigames
         [SerializeField]
         private KeyValuePair<int, Sprite>[] _playerIcons;
 
+        [SerializeField]
+        private KeyValuePair<int, Sprite>[] _playerBackground;
 
-        public bool TryGetPlayerIcon(int id, out Sprite sprite)
-        {
-            for (int i = 0; i < _playerIcons.Length; i++)
-            {
-                var keyValuePair = _playerIcons[i];
-                if (keyValuePair.Key == id)
-                {
-                    sprite = keyValuePair.Value;
-                    return true;
-                }
-            }
+        public KeyValuePair<int, Sprite>[] PlayerIcons => _playerIcons;
 
-            sprite = null;
-            return false;
-        }
+        public KeyValuePair<int, Sprite>[] PlayerBackground => _playerBackground;
 
 
     }
 
     [Serializable]
-    struct KeyValuePair<TKey, TValue>
+    public struct KeyValuePair<TKey, TValue>
     {
         public TKey Key;
         public TValue Value;
     }
 
+    public static class KeyValuePairUtility
+    {
+        public static bool TryGetValue<TKey, TValue>(this KeyValuePair<TKey, TValue>[] array, TKey key, out TValue value)
+        {
+            value = default;
+            for (int i = 0; i < array.Length; i++)
+            {
+                var keyValuePair = array[i];
+                if (keyValuePair.Key.Equals(key))
+                {
+                    value = keyValuePair.Value;
+                    return true;
+                }
+            }
 
+            return false;
+        }
+    }
 
 }

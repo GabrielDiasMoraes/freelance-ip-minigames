@@ -4,26 +4,50 @@ using UnityEngine.Events;
 
 namespace Minigames
 {
-    public class PlayerSelectionController
+    public class PlayerSelectionController : IController
     {
-        //TODO: Move it to a Scriptable Object
-        private List<PlayerData> _players;
+        private GameData _gameData;
         public UnityAction OnEnable { get; set; }
         public UnityAction OnDispatch { get; set; }
         public UnityAction OnPlayerListChange { get; set; }
-        public List<PlayerData> Players => _players;
 
-        public PlayerSelectionController()
+        public List<PlayerData> Players => _gameData.Players;
+
+        public List<int> PlayerIds;
+
+        public PlayerSelectionController(GameData gameData)
         {
-            _players = new List<PlayerData>();
+            PlayerIds = new List<int>() { 0, 1, 2, 3, 4, 5 };
+            _gameData = gameData;
+            _gameData.OnChangeGameState += OnChangeGameState;
+        }
+
+        private void OnChangeGameState(GameState newGameState)
+        {
+            switch (newGameState)
+            {
+                case GameState.PlayerSelection:
+                    EnableController();
+                    break;
+                case GameState.None:
+                case GameState.Game:
+                case GameState.Result:
+                    DisableController();
+                    break;
+            }
         }
 
         public void EnableController()
         {
+            _gameData.Reset();
+            if(Players.Count == 0)
+            {
+                AddNewPlayer();
+            }
             OnEnable?.Invoke();
         }
 
-        public void DispatchController()
+        public void DisableController()
         {
             OnDispatch?.Invoke();
         }
@@ -32,44 +56,60 @@ namespace Minigames
         {
             int id = GetID();
 
-            int count = _players.Count;
+            int count = Players.Count;
 
             PlayerData newPlayer = new PlayerData
             {
                 ID = id,
-                Name = $"Player {count+1}",
+                Name = $"Player {count + 1}",
                 Score = 0
             };
 
-            _players.Add(newPlayer);
+            Players.Add(newPlayer);
             OnPlayerListChange?.Invoke();
         }
 
+        public void UpdatePlayerName(int playerID, string newText)
+        {
+            for (int i = 0; i < Players.Count; i++)
+            {
+                var player = Players[i];
+                if (player.ID == playerID)
+                {
+                    player.Name = newText;
+                }
+            }
+        }
+
+
+
         private int GetID()
         {
-            //TODO: Save the generated IDs to not generate the same
-            return Random.Range(0, 5);
+            PlayerIds.Shuffle();
+            int index = Random.Range(0, PlayerIds.Count);
+            int id = PlayerIds[index];
+            PlayerIds.RemoveAt(index);
+            return id;
         }
 
         public void RemovePlayer()
         {
-            RemovePlayer(_players.Count - 1);
+            RemovePlayer(Players.Count - 1);
         }
 
         public void RemovePlayer(int index)
         {
-            if (index >= _players.Count) return;
+            if (index >= Players.Count) return;
 
-            _players.RemoveAt(index);
+            PlayerIds.Add(Players[index].ID);
+            Players.RemoveAt(index);
             OnPlayerListChange?.Invoke();
         }
-    }
 
-    public struct PlayerData
-    {
-        public int ID;
-        public string Name;
-        public int Score;
+        public void Continue()
+        {
+            _gameData.GameState = GameState.Game;
+        }
     }
 
 }
