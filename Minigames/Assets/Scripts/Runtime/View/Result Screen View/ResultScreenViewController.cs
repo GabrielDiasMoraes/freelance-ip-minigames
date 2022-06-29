@@ -44,6 +44,7 @@ namespace Minigames
                 };
             }
             _resultScreenViewData.Results = playerResultInfos;
+            _resultScreenViewData.ContinueAction = _resultController.ResetGame;
             _view.OpenView();
             _view.UpdateView(_resultScreenViewData);
         }

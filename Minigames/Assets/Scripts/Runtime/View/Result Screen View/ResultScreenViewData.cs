@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Minigames
 {
@@ -8,6 +9,7 @@ namespace Minigames
     {
         [NonReorderable]
         public PlayerResultInfo[] Results;
+        public UnityAction ContinueAction;
     }
 
     [Serializable]

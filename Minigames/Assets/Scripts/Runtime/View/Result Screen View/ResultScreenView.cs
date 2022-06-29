@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.UI;
 
 namespace Minigames
 {
@@ -9,6 +10,7 @@ namespace Minigames
 
         [SerializeField] private Transform _playerResultRoot;
         [SerializeField] private RankElement _rankingElementPrefab;
+        [SerializeField] private Button _contineButton;
 
         private PoolUtility _rankElementPool;
         private List<RankElement> _spawnedElements;
@@ -42,6 +44,8 @@ namespace Minigames
 
         public override void UpdateView(ResultScreenViewData viewData)
         {
+            _contineButton.onClick.RemoveAllListeners();
+            _contineButton.onClick.AddListener(viewData.ContinueAction);
             ClearElements();
             ConfigureElements(viewData.Results);
         }

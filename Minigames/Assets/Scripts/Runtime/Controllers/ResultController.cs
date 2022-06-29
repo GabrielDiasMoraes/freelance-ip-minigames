@@ -30,6 +30,11 @@ namespace Minigames
             }
         }
 
+        public void ResetGame()
+        {
+            _gameData.GameState = GameState.PlayerSelection;
+        }
+
         public void DisableController()
         {
             OnDisable?.Invoke();

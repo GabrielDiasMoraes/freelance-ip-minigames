@@ -17,7 +17,6 @@ namespace Minigames
 
         public PlayerSelectionController(GameData gameData)
         {
-            PlayerIds = new List<int>() { 0, 1, 2, 3, 4, 5 };
             _gameData = gameData;
             _gameData.OnChangeGameState += OnChangeGameState;
         }
@@ -39,6 +38,7 @@ namespace Minigames
 
         public void EnableController()
         {
+            PlayerIds = new List<int>() { 0, 1, 2, 3, 4, 5 };
             _gameData.Reset();
             if(Players.Count == 0)
             {
