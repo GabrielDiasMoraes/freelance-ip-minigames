@@ -1,6 +1,8 @@
 
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -21,6 +23,10 @@ namespace Minigames
         [SerializeField] private RectTransform _contentArea;
         [SerializeField] private RectTransform _context;
         [SerializeField] private Button _confirmButton;
+        [SerializeField] private Image _confirmButtonBackground;
+        [SerializeField] private GameObject _counterParent;
+        [SerializeField] private TextMeshProUGUI _counterText;
+        [SerializeField] private TextMeshProUGUI _gameTimer;
 
         private int _playerId;
         private PoolUtility _slotPool;
@@ -31,6 +37,12 @@ namespace Minigames
         private List<Slot> _slotsObjects;
         private List<Item> _availableItems;
         private UnityAction<int> _onConfirmButton;
+        private bool _gameEnded;
+        private bool _hasBlocker;
+
+        public bool CanInteract => !GameEnded && !_hasBlocker;
+
+        public bool GameEnded { get => _gameEnded; set => _gameEnded = value; }
 
         [Inject]
         public void Construct(Item _itemPrefab, Slot _slotPrefab, InputController inputController, Camera camera, Canvas gameCanvas)
@@ -52,20 +64,15 @@ namespace Minigames
             ClearSlots();
         }
 
-        public override void CloseView()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override void CloseView() { }
 
-        public override void OpenView()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override void OpenView() { }
 
         public override void UpdateView(GameViewSlotData viewData)
         {
             _gameViewCamera.rect = viewData.CameraData;
             _backgroundImage.sprite = viewData.BackgroundImage;
+            _confirmButtonBackground.sprite = viewData.BackgroundImage;
             _playerIcon.sprite = viewData.PlayerIcon;
             _playerName.text = viewData.PlayerName;
             _context.rotation = new Quaternion(0, 0, viewData.CanvasRotationZ, 0);
@@ -77,11 +84,33 @@ namespace Minigames
             {
                 var itemData = viewData.Items[i];
                 ConfigureItem(itemData);
-                ConfigureSlot(i);
+                CreateSlot(i);
             }
+            List<ItemData> itemListClone = new List<ItemData>(viewData.Items);
+            itemListClone = itemListClone.OrderByDescending(item => item.AvgMonthCons).ToList();
+            for (int i = 0; i < itemListClone.Count; i++)
+            {
+                _slotsObjects[i].ConfigureSlot(i, itemListClone[i].AvgMonthCons);
+            }
+
+            //slotObj.ConfigureSlot(index);
             _confirmButton.interactable = true;
             ConfigureButton();
             _onConfirmButton = viewData.OnConfirmClick;
+            GameEnded = false;
+            _hasBlocker = false;
+        }
+
+        public void UpdateBlockCounter(bool isActive, int value = 0)
+        {
+            _counterParent.SetActive(isActive);
+            _counterText.text = $"{value}";
+            _hasBlocker = isActive;
+        }
+
+        public void UpdateGameTimer(int value)
+        {
+            _gameTimer.text = $"{value}";
         }
 
         public void ConfigureButton()
@@ -102,6 +131,7 @@ namespace Minigames
 
         public int ShowResults()
         {
+            GameEnded = true;
             int score = 0;
             for (int i = 0; i < _slotsObjects.Count; i++)
             {
@@ -113,10 +143,7 @@ namespace Minigames
 
         private void OnConfirButtonClick()
         {
-            for (int i = 0; i < _availableItems.Count; i++)
-            {
-                _availableItems[i].GameEnded = true;
-            }
+            GameEnded = true;
             _confirmButton.interactable = false;
             _onConfirmButton?.Invoke(_playerId);
         }
@@ -125,15 +152,14 @@ namespace Minigames
         {
             Item itemObj = _itemPool.GetFromPool<Item>();
             itemObj.Constructor(_inputController, _contentArea, this, _camera, _gameCanvas);
-            itemObj.ConfigureItem(itemData.ItemImage, itemData.ItemDesiredPosition);
+            itemObj.ConfigureItem(itemData.ItemImage, itemData.ItemDesiredPosition, itemData.ItemText, itemData.ItemName);
             
             _availableItems.Add(itemObj);
         }
 
-        private void ConfigureSlot(int index)
+        private void CreateSlot(int index)
         {
             Slot slotObj = _slotPool.GetFromPool<Slot>();
-            slotObj.ConfigureSlot(index);
             slotObj.transform.SetSiblingIndex(index);
             _slotsObjects.Add(slotObj);
         }

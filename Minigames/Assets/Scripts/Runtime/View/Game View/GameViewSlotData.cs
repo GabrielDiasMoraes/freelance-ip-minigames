@@ -12,6 +12,7 @@ namespace Minigames
         public ItemData[] Items;
         public Rect CameraData;
         public Sprite BackgroundImage;
+        public Sprite BackgroundButtonImage;
         public Sprite PlayerIcon;
         public string PlayerName;
         public float CanvasRotationZ;

@@ -12,24 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64db1b503df8830468b50d29a5cbb3a0, type: 3}
   m_Name: GameData
   m_EditorClassIdentifier: 
-  _levels:
-  - Items:
-    - ItemImage: {fileID: 21300000, guid: a60d85e19fe3877488e4db36214d7281, type: 3}
-      ItemDesiredPosition: 0
-    - ItemImage: {fileID: 21300000, guid: 8d9739e816fab04409d0ab820b82149e, type: 3}
-      ItemDesiredPosition: 1
-    - ItemImage: {fileID: 21300000, guid: 2e2c5de38b51cf74f8eaa22c292d3114, type: 3}
-      ItemDesiredPosition: 2
-  - Items:
-    - ItemImage: {fileID: 21300000, guid: 9df81246e4df1154cb8d7410d2af7e84, type: 3}
-      ItemDesiredPosition: 0
-    - ItemImage: {fileID: 21300000, guid: bcb5b4fb84e360f4ab517305cc7ea5ab, type: 3}
-      ItemDesiredPosition: 1
-    - ItemImage: {fileID: 21300000, guid: 52351609d8e630847acd8fd9a9c40c89, type: 3}
-      ItemDesiredPosition: 2
-    - ItemImage: {fileID: 21300000, guid: 74eea1e5ac116724fad3c1971b35589c, type: 3}
-      ItemDesiredPosition: 3
-    - ItemImage: {fileID: 21300000, guid: 5f800e8c23f52d9439d7929cf06cd922, type: 3}
-      ItemDesiredPosition: 4
-    - ItemImage: {fileID: 21300000, guid: 9e2d10e868bfcc2459840cd98bcfde42, type: 3}
-      ItemDesiredPosition: 5
+  _gameItems: {fileID: 11400000, guid: 30cf8f44562c7044d9fef946b6a67360, type: 2}
+  _levelDataArray:
+  - amountOfItems: 3
+    levelTime: 30
+  - amountOfItems: 5
+    levelTime: 30
+  - amountOfItems: 7
+    levelTime: 30

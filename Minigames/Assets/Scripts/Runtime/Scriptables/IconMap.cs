@@ -14,11 +14,14 @@ namespace Minigames
         [SerializeField]
         private KeyValuePair<int, Sprite>[] _playerBackground;
 
+        [SerializeField]
+        private KeyValuePair<int, Sprite>[] _playerButtonBackground;
+
         public KeyValuePair<int, Sprite>[] PlayerIcons => _playerIcons;
 
         public KeyValuePair<int, Sprite>[] PlayerBackground => _playerBackground;
 
-
+        public KeyValuePair<int, Sprite>[] PlayerButtonBackground => _playerButtonBackground;
     }
 
     [Serializable]

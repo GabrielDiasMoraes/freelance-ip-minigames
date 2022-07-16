@@ -38,3 +38,16 @@ MonoBehaviour:
     Value: {fileID: 21300000, guid: 1ea9f4039bebf564a95f88fcd241db19, type: 3}
   - Key: 5
     Value: {fileID: 21300000, guid: f749d6f5fe71dcf48beb9d9045cee173, type: 3}
+  _playerButtonBackground:
+  - Key: 0
+    Value: {fileID: 0}
+  - Key: 0
+    Value: {fileID: 0}
+  - Key: 0
+    Value: {fileID: 0}
+  - Key: 0
+    Value: {fileID: 0}
+  - Key: 0
+    Value: {fileID: 0}
+  - Key: 0
+    Value: {fileID: 0}

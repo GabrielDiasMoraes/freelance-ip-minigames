@@ -20,8 +20,14 @@ namespace Minigames
         private PoolUtility _viewPool;
         private List<GameViewSlot> _viewSlots;
         private Dictionary<int, bool> _playerConfirmed;
+        private Dictionary<int, float> _playerSpentTimePhase;
 
-        private readonly WaitForSeconds _waitForSeconds;
+        private readonly WaitForSecondsRealtime _waitForPlayerResult;
+        private readonly WaitForSecondsRealtime _waitForCorrectResult;
+
+        private float phaseTimer;
+        private float maxTimer;
+        private Coroutine gameTimerCoroutine;
 
         public GameController(GameData gameData, GameViewSlot gameViewSlotPrefab, DiContainer diContainer, IconMap iconMap, CoroutineRunner coroutineRunner)
         {
@@ -32,7 +38,9 @@ namespace Minigames
             _viewPool = new PoolUtility(_gameViewSlotPrefab, 0, diContainer: diContainer);
             _viewSlots = new List<GameViewSlot>();
             _playerConfirmed = new Dictionary<int, bool>();
-            _waitForSeconds = new WaitForSeconds(3);
+            _playerSpentTimePhase = new Dictionary<int, float>();
+            _waitForPlayerResult = new WaitForSecondsRealtime(gameData.PlayerResultTimer);
+            _waitForCorrectResult = new WaitForSecondsRealtime(gameData.CorrectResultTimer);
             _gameData.OnChangeGameState += OnChangeGameState;
         }
 
@@ -54,6 +62,7 @@ namespace Minigames
         public void EnableController()
         {
             _playerConfirmed.Clear();
+            _playerSpentTimePhase.Clear();
             OnEnable?.Invoke();
             ClearViewSlots();
             CreateViewSlots();
@@ -86,6 +95,7 @@ namespace Minigames
 
         private void ConfigureViewSlots()
         {
+            maxTimer = phaseTimer = GetTimer();
             int maxPlayers = _gameData.Players.Count;
             for (int i = 0; i < _viewSlots.Count; i++)
             {
@@ -99,129 +109,152 @@ namespace Minigames
                     _viewData.BackgroundImage = background;
                 }
 
+                if (_iconMap.PlayerButtonBackground.TryGetValue(playerData.ID, out var buttonBackground))
+                {
+                    _viewData.BackgroundButtonImage = buttonBackground;
+                }
+
                 if (_iconMap.PlayerIcons.TryGetValue(playerData.ID, out var icon))
                 {
                     _viewData.PlayerIcon = icon;
                 }
                 _viewData.PlayerID = playerData.ID;
                 _viewData.PlayerName = playerData.Name;
-                _viewData.CameraData = GenerateCameraRect(i, maxPlayers);
+                _viewData.CameraData = Utils.GenerateCameraRect(i, maxPlayers);
                 _viewData.Items = GetItems();
                 _viewData.CanvasRotationZ = i >= Mathf.Ceil(maxPlayers / 2f) ? 180f : 0;
                 _viewData.OnConfirmClick += OnConfirmClicked;
                 gameViewSlot.UpdateView(_viewData);
+                gameViewSlot.UpdateGameTimer((int)phaseTimer);
+            }
+            _coroutineRunner.StartCoroutine(CooldownBlocker(delegate()
+            {
+                gameTimerCoroutine = _coroutineRunner.StartCoroutine(UpdateGameTimerCoroutine());
+            }));
+        }
+
+        private IEnumerator CooldownBlocker(UnityAction onComplete = null)
+        {
+            var time = 5f;
+            UpdateBlockCounter(true, (int)time);
+            yield return new WaitForSecondsRealtime(1f);
+            while (time >= 1)
+            {
+                UpdateBlockCounter(true, (int)time);
+                time -= Time.deltaTime;
+                yield return null;
+            }
+
+            UpdateBlockCounter(false);
+
+            onComplete?.Invoke();
+
+        }
+
+        private void UpdateBlockCounter(bool isActive, int value = 0)
+        {
+            for (int i = 0; i < _viewSlots.Count; i++)
+            {
+                _viewSlots[i].UpdateBlockCounter(isActive, value);
+            }
+        }
+
+        private IEnumerator UpdateGameTimerCoroutine()
+        {
+            yield return new WaitForSecondsRealtime(1f);
+            while (phaseTimer >= 1f)
+            {
+                UpdateGameViewTimers((int)phaseTimer);
+                phaseTimer -= Time.deltaTime;
+                yield return null;
+            }
+            UpdateGameViewTimers((int)phaseTimer);
+            _coroutineRunner.StartCoroutine(CompletePhase());
+        }
+
+        private void UpdateGameViewTimers(int value)
+        {
+            for (int i = 0; i < _viewSlots.Count; i++)
+            {
+                _viewSlots[i].UpdateGameTimer(value);
             }
         }
 
         private ItemData[] GetItems()
         {
-            List<ItemData> shuffleItems = new List<ItemData>(_gameData.GetCurrentLevel.Items);
-            shuffleItems.Shuffle();
-            return shuffleItems.ToArray();
+            var currentLevel = _gameData.GetCurrentLevel;
+            var gameItems = _gameData.GetRandomItemDataList(currentLevel.amountOfItems);
+
+            gameItems.Shuffle();
+            return gameItems.ToArray();
+        }
+
+        private float GetTimer()
+        {
+            var currentLevel = _gameData.GetCurrentLevel;
+            return currentLevel.levelTime;
         }
 
         private void OnConfirmClicked(int playerID)
         {
             _playerConfirmed.TryAdd(playerID, true);
+            _playerSpentTimePhase.TryAdd(playerID, maxTimer - phaseTimer);
             if(_playerConfirmed.Count == _gameData.Players.Count)
             {
-                for (int i = 0; i < _viewSlots.Count; i++)
-                {
-                    var viewSlot = _viewSlots[i];
-                    int score = viewSlot.ShowResults();
-                    for (int o = 0; o < _gameData.Players.Count; o++)
-                    {
-                        var player = _gameData.Players[o];
-                        if (player.ID != viewSlot.GetPlayerID())
-                            continue;
-                        player.Score += score;
-                    }
-                }
-                if(_gameData.TryNextPhase())
-                {
-                    _coroutineRunner.StartCoroutine(LoadNextPhase());
-                }
-                else
-                {
-                    _coroutineRunner.StartCoroutine(LoadResultPhase());
-                }
+                _coroutineRunner.StopCoroutine(gameTimerCoroutine);
+                _coroutineRunner.StartCoroutine(CompletePhase());
             }
         }
 
-        private IEnumerator LoadNextPhase()
+        private IEnumerator CompletePhase()
         {
-            yield return _waitForSeconds;
-
-            _playerConfirmed.Clear();
-            ConfigureViewSlots();
-
-            yield return null;
-        }
-
-        private IEnumerator LoadResultPhase()
-        {
-            yield return _waitForSeconds;
-            _gameData.GameState = GameState.Result;
-        }
-
-        private Rect GenerateCameraRect(int viewIndex, int viewCount)
-        {
-            if (viewCount == 1)
+            for (int i = 0; i < _viewSlots.Count; i++)
             {
-                return new Rect(Vector2.zero, Vector2.one);
+                var viewSlot = _viewSlots[i];
+                int score = viewSlot.ShowResults();
+                for (int o = 0; o < _gameData.Players.Count; o++)
+                {
+                    var player = _gameData.Players[o];
+                    if (player.ID != viewSlot.GetPlayerID())
+                        continue;
+                    player.Score += score;
+                    if(!_playerSpentTimePhase.TryGetValue(player.ID, out var spentTime))
+                    {
+                        spentTime = maxTimer;
+                    }
+                    player.TimeSpent += spentTime;
+                }
+            }
+            yield return _waitForPlayerResult;
+
+            //Todo: Show Correct Result;
+            Debug.LogWarning("TODO: SHOW CORRECT RESULT");
+
+            yield return _waitForCorrectResult;
+
+            if (_gameData.TryNextPhase())
+            {
+                LoadNextPhase();
             }
             else
             {
-                int columnAmount = (int)Mathf.Ceil(viewCount / 2f);
-                int columnAmountTop = viewCount - columnAmount;
-                if (viewIndex+1 > columnAmount)
-                {
-                    return GenerateTopLineRect(viewIndex-columnAmount, columnAmountTop);
-                }
-                else
-                {
-                    return GenerateBottomLineRect(viewIndex, columnAmount);
-                }
+                LoadResultPhase();
             }
         }
 
-        private Rect GenerateBottomLineRect(int viewIndex, int columnAmount)
+        private void LoadNextPhase()
         {
-            float heightSize = 0.5f;
-
-            float widthSize = 1f / columnAmount;
-            Vector2 position = new Vector2()
-            {
-                x = viewIndex * widthSize,
-                y = 0,
-            };
-
-            Vector2 size = new Vector2()
-            {
-                x = widthSize,
-                y = heightSize
-            };
-            return new Rect(position, size);
+            _playerConfirmed.Clear();
+            _playerSpentTimePhase.Clear();
+            ConfigureViewSlots();
         }
 
-        private Rect GenerateTopLineRect(int viewIndex, int columnAmount)
+        private void LoadResultPhase()
         {
-            float heightSize = 0.5f;
-
-            float widthSize = 1f / columnAmount;
-            Vector2 position = new Vector2()
-            {
-                x = ((columnAmount-1) - viewIndex) * widthSize,
-                y = 0.5f,
-            };
-
-            Vector2 size = new Vector2()
-            {
-                x = widthSize,
-                y = heightSize
-            };
-            return new Rect(position, size);
+            _gameData.GameState = GameState.Result;
         }
+
+        
 
         private void ClearViews()
         {

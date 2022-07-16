@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,9 @@ namespace Minigames
 
         // Serialized References
         [SerializeField] private RectTransform _rectTransform;
+        [SerializeField] private Canvas _itemCanvas;
+        [SerializeField] private TextMeshProUGUI _itemText;
+        [SerializeField] private TextMeshProUGUI _itemName;
 
         // Injectables References
         private InputController _inputController;
@@ -26,12 +30,11 @@ namespace Minigames
         private int _pointerID;
         private bool _isDragging;
         private bool _gameEnded;
-
         private bool _isInSlot;
 
         public bool IsInSlot => _isInSlot;
 
-        public bool GameEnded { get => _gameEnded; set => _gameEnded = value; }
+        public bool CanInteract => _gameView.CanInteract;
         public int DesiredPosition => _desiredPosition;
 
         public void Constructor(InputController inputController, RectTransform contentArea, GameViewSlot gameView, Camera camera, Canvas gameCanvas)
@@ -50,10 +53,14 @@ namespace Minigames
             RevertToOriginalPosition();
         }
 
-        public void ConfigureItem(Sprite sprite, int desiredPosition)
+        public void ConfigureItem(Sprite sprite, int desiredPosition, string itemText, string itemName)
         {
+            _itemName.text = itemName;
             _desiredPosition = desiredPosition;
             _itemImage.sprite = sprite;
+            _itemText.text = $"{itemText}/dia";
+            _itemImage.type = Image.Type.Simple;
+            _itemImage.preserveAspect = true;
         }
 
         protected override void OnDisable()
@@ -64,17 +71,19 @@ namespace Minigames
         public override void Init()
         {
             base.Init();
-            GameEnded = false;
+            _itemCanvas.sortingLayerName = "Overlay"; //Overlay Layer
+            _itemCanvas.sortingOrder = 1;
         }
 
         private void OnNewPointer(PointerData[] pointers)
         {
-            if (GameEnded) return;
+            if (!CanInteract) return;
             for (int i = 0; i < pointers.Length; i++)
             {
                 PointerData pointerData = pointers[i];
                 if (IsInsideArea(pointerData))
                 {
+                    _itemCanvas.sortingOrder = 2;
                     _isDragging = true;
                     _pointerID = pointerData.PointerID;
                     if (_slotRef == null)
@@ -88,7 +97,9 @@ namespace Minigames
 
         private void OnUpdatePointer(PointerData[] pointers)
         {
-            if (!_isDragging || GameEnded) return;
+            if (!_isDragging) return;
+
+            if (!CanInteract) RevertToOriginalPosition();
 
             for (int i = 0; i < pointers.Length; i++)
             {
@@ -106,16 +117,21 @@ namespace Minigames
 
         private void OnExitPointer(PointerData[] pointers)
         {
-            if (GameEnded) return;
+            if (!CanInteract) return;
             for (int i = 0; i < pointers.Length; i++)
             {
                 PointerData pointerData = pointers[i];
                 if (pointerData.PointerID == _pointerID)
                 {
                     _isDragging = false;
+                    _itemCanvas.sortingOrder = 1;
                     _pointerID = -1;
                     if (_gameView.IsInsideSlot(pointerData.PointerPosition, _camera, out var slot))
                     {
+                        if(_slotRef != null)
+                        {
+                            _slotRef.ClearItem();
+                        }
                         _slotRef = slot;
                         _slotRef.SetItem(this);
                         _isInSlot = true;
@@ -173,6 +189,7 @@ namespace Minigames
                 _slotRef.ClearItem();
                 _slotRef = null;
                 _isInSlot = false;
+                RevertToOriginalPosition();
             }
         }
 

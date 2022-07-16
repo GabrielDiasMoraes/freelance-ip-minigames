@@ -10,6 +10,11 @@ namespace Minigames
         [NonReorderable]
         public PlayerResultInfo[] Results;
         public UnityAction ContinueAction;
+        public Rect CameraData;
+        public float CanvasRotationZ;
+        public Sprite Background;
+        public int CurrentPlayerPosition;
+        public int PlayerCount;
     }
 
     [Serializable]
@@ -18,5 +23,6 @@ namespace Minigames
         public Sprite PlayerIcon;
         public string PlayerName;
         public int PlayerScore;
+        public float PlayerSpentTime;
     }
 }

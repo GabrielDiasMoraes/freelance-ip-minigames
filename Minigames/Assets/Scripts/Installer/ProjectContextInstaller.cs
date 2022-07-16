@@ -27,11 +27,12 @@ namespace Minigames {
             Container.Bind<Item>().FromInstance(_itemPrefab).AsSingle();
             Container.Bind<Slot>().FromInstance(_slotPrefab).AsSingle();
             Container.Bind<GameViewSlot>().FromInstance(_gameViewSlot).AsSingle();
+            Container.Bind<ResultScreenView>().FromInstance(_resultScreenView).AsSingle();
 
             //Scriptables
             Container.Bind<IconMap>().FromInstance(_iconMap).AsSingle();
             var _sessionGameData = Instantiate(_gameData);
-            _sessionGameData.Reset();
+            _sessionGameData.InitOrReset();
             Container.Bind<GameData>().FromInstance(_sessionGameData).AsSingle();
 
             // Controllers
@@ -43,9 +44,6 @@ namespace Minigames {
             //View
             PlayerSelectionView playerSelectionView = Container.InstantiatePrefabForComponent<PlayerSelectionView>(_playerViewPrefab, _gameCanvas);
             Container.Bind<PlayerSelectionView>().FromInstance(playerSelectionView).AsSingle();
-
-            ResultScreenView resultScreenView = Container.InstantiatePrefabForComponent<ResultScreenView>(_resultScreenView, _gameCanvas);
-            Container.Bind<ResultScreenView>().FromInstance(resultScreenView).AsSingle();
         }
 
         private void Start()

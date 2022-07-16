@@ -39,7 +39,7 @@ namespace Minigames
         public void EnableController()
         {
             PlayerIds = new List<int>() { 0, 1, 2, 3, 4, 5 };
-            _gameData.Reset();
+            _gameData.InitOrReset();
             if(Players.Count == 0)
             {
                 AddNewPlayer();
@@ -61,7 +61,7 @@ namespace Minigames
             PlayerData newPlayer = new PlayerData
             {
                 ID = id,
-                Name = $"Player {count + 1}",
+                Name = $"Jogador {count + 1}",
                 Score = 0
             };
 
