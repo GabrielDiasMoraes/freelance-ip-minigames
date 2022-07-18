@@ -785,7 +785,6 @@ MonoBehaviour:
   _gameViewCamera: {fileID: 2816763484735237359}
   _context: {fileID: 3996552702683946694}
   _gridLayoutGroup: {fileID: 8909320673881932594}
-  _canvasRectTransform: {fileID: 7107162389488416294}
   MockData:
     Results:
     - PlayerIcon: {fileID: 21300000, guid: 612089985f78e34489eae512b9f5c443, type: 3}
@@ -816,12 +815,12 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 0
-      height: 0
+      width: 1
+      height: 1
     CanvasRotationZ: 0
     Background: {fileID: 0}
     CurrentPlayerPosition: 0
-    PlayerCount: 0
+    PlayerCount: 6
 --- !u!1 &8909320675830555655
 GameObject:
   m_ObjectHideFlags: 0

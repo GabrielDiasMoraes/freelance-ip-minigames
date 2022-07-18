@@ -51,7 +51,7 @@ namespace Minigames
             _contineButton.onClick.RemoveAllListeners();
             _contineButton.onClick.AddListener(viewData.ContinueAction);
             ClearElements();
-            ConfigureElements(viewData.Results);
+            ConfigureElements(viewData);
             _context.rotation = new Quaternion(0, 0, viewData.CanvasRotationZ, 0);
             _gameViewCamera.rect = viewData.CameraData;
             StartCoroutine(ConfigureCellSize(viewData));
@@ -74,16 +74,18 @@ namespace Minigames
             _spawnedElements.Clear();
         }
 
-        private void ConfigureElements(PlayerResultInfo[] playerResultInfos)
+        private void ConfigureElements(ResultScreenViewData viewData)
         {
+            var playerResultInfos = viewData.Results;
             playerResultInfos = playerResultInfos.OrderBy(item => item.PlayerSpentTime).ToArray();
-            IOrderedEnumerable<PlayerResultInfo> orderedList = playerResultInfos.OrderByDescending(item => item.PlayerScore);
+            var orderedList = playerResultInfos.OrderByDescending(item => item.PlayerScore).ToList();
 
             int rank = 1;
-            foreach (var playerResultInfo in orderedList)
+            for (int i = 0; i < orderedList.Count; i++)
             {
+                PlayerResultInfo playerResultInfo = orderedList[i];
                 RankElement rankElement = _rankElementPool.GetFromPool<RankElement>();
-                rankElement.Configure(rank, playerResultInfo.PlayerIcon, playerResultInfo.PlayerName, playerResultInfo.PlayerScore, playerResultInfo.PlayerSpentTime);
+                rankElement.Configure(rank, playerResultInfo.PlayerIcon, playerResultInfo.PlayerName, playerResultInfo.PlayerScore, playerResultInfo.PlayerSpentTime, viewData.CurrentPlayerPosition == i);
                 _spawnedElements.Add(rankElement);
                 rank++;
             }
