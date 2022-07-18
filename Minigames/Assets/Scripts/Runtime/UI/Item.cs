@@ -132,9 +132,7 @@ namespace Minigames
                         {
                             _slotRef.ClearItem();
                         }
-                        _slotRef = slot;
-                        _slotRef.SetItem(this);
-                        _isInSlot = true;
+                        slot.SetItem(this);
                     }
                     else
                     {
@@ -191,6 +189,12 @@ namespace Minigames
                 _isInSlot = false;
                 RevertToOriginalPosition();
             }
+        }
+
+        public void SetSlotRef(Slot slotRef)
+        {
+            _slotRef = slotRef;
+            _isInSlot = true;
         }
 
         private bool IsInsideArea(PointerData pointerData)

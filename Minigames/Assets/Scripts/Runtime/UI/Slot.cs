@@ -32,6 +32,7 @@ namespace Minigames
                 _insideItem.ClearSlotRef();
             }
             _insideItem = item;
+            _insideItem.SetSlotRef(this);
             item.transform.SetParent(RectTransform);
             item.transform.localPosition = Vector3.zero;
         }
@@ -46,6 +47,12 @@ namespace Minigames
         public void ClearItem()
         {
             _insideItem = null;
+        }
+
+        public void PrepareForCorrectResult()
+        {
+            ClearItem();
+            _positionNumber.color = Color.yellow;
         }
 
         protected override void OnDisable()

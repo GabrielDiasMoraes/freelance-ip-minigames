@@ -228,7 +228,11 @@ namespace Minigames
             yield return _waitForPlayerResult;
 
             //Todo: Show Correct Result;
-            Debug.LogWarning("TODO: SHOW CORRECT RESULT");
+            for (int i = 0; i < _viewSlots.Count; i++)
+            {
+                var viewSlot = _viewSlots[i];
+                viewSlot.ShowCorrectResults();
+            }
 
             yield return _waitForCorrectResult;
 

@@ -141,6 +141,26 @@ namespace Minigames
             return score;
         }
 
+        public void ShowCorrectResults()
+        {
+            for (int i = 0; i < _slotsObjects.Count; i++)
+            {
+                _slotsObjects[i].PrepareForCorrectResult();
+            }
+
+            for (int i = 0; i < _availableItems.Count; i++)
+            {
+                var item = _availableItems[i];
+                var slotObj = _slotsObjects[item.DesiredPosition];
+                slotObj.SetItem(item);
+            }
+
+            for (int i = 0; i < _slotsObjects.Count; i++)
+            {
+                _slotsObjects[i].ClearItem();
+            }
+        }
+
         private void OnConfirButtonClick()
         {
             GameEnded = true;
