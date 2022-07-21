@@ -141,7 +141,7 @@ namespace Minigames
                     }
                 }
             }
-            _gameView.ConfigureButton();
+            _gameView.ConfigureConfirmButton();
         }
 
         private void ClampPosition(RectTransform rectTransform)

@@ -112,6 +112,7 @@ namespace Minigames
         public string Name;
         public int Score;
         public float TimeSpent;
+        public bool HasQuitted;
     }
 
     [Serializable]

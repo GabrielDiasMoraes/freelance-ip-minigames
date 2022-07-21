@@ -25,9 +25,10 @@ namespace Minigames
         private readonly WaitForSecondsRealtime _waitForPlayerResult;
         private readonly WaitForSecondsRealtime _waitForCorrectResult;
 
-        private float phaseTimer;
-        private float maxTimer;
-        private Coroutine gameTimerCoroutine;
+        private float _phaseTimer;
+        private float _maxTimer;
+        private Coroutine _gameTimerCoroutine;
+        private int _playingPlayerCount;
 
         public GameController(GameData gameData, GameViewSlot gameViewSlotPrefab, DiContainer diContainer, IconMap iconMap, CoroutineRunner coroutineRunner)
         {
@@ -95,8 +96,9 @@ namespace Minigames
 
         private void ConfigureViewSlots()
         {
-            maxTimer = phaseTimer = GetTimer();
+            _maxTimer = _phaseTimer = GetTimer();
             int maxPlayers = _gameData.Players.Count;
+            _playingPlayerCount = maxPlayers;
             for (int i = 0; i < _viewSlots.Count; i++)
             {
                 var playerData = _gameData.Players[i];
@@ -120,16 +122,19 @@ namespace Minigames
                 }
                 _viewData.PlayerID = playerData.ID;
                 _viewData.PlayerName = playerData.Name;
+                _viewData.PlayerQuitted = playerData.HasQuitted;
+                _playingPlayerCount -= playerData.HasQuitted ? 1 : 0;
                 _viewData.CameraData = Utils.GenerateCameraRect(i, maxPlayers);
                 _viewData.Items = GetItems();
                 _viewData.CanvasRotationZ = i >= Mathf.Ceil(maxPlayers / 2f) ? 180f : 0;
                 _viewData.OnConfirmClick += OnConfirmClicked;
+                _viewData.OnPlayerQuit += OnPlayerQuit;
                 gameViewSlot.UpdateView(_viewData);
-                gameViewSlot.UpdateGameTimer((int)phaseTimer);
+                gameViewSlot.UpdateGameTimer((int)_phaseTimer);
             }
             _coroutineRunner.StartCoroutine(CooldownBlocker(delegate()
             {
-                gameTimerCoroutine = _coroutineRunner.StartCoroutine(UpdateGameTimerCoroutine());
+                _gameTimerCoroutine = _coroutineRunner.StartCoroutine(UpdateGameTimerCoroutine());
             }));
         }
 
@@ -162,13 +167,13 @@ namespace Minigames
         private IEnumerator UpdateGameTimerCoroutine()
         {
             yield return new WaitForSecondsRealtime(1f);
-            while (phaseTimer >= 1f)
+            while (_phaseTimer >= 1f)
             {
-                UpdateGameViewTimers((int)phaseTimer);
-                phaseTimer -= Time.deltaTime;
+                UpdateGameViewTimers((int)_phaseTimer);
+                _phaseTimer -= Time.deltaTime;
                 yield return null;
             }
-            UpdateGameViewTimers((int)phaseTimer);
+            UpdateGameViewTimers((int)_phaseTimer);
             _coroutineRunner.StartCoroutine(CompletePhase());
         }
 
@@ -198,11 +203,39 @@ namespace Minigames
         private void OnConfirmClicked(int playerID)
         {
             _playerConfirmed.TryAdd(playerID, true);
-            _playerSpentTimePhase.TryAdd(playerID, maxTimer - phaseTimer);
-            if(_playerConfirmed.Count == _gameData.Players.Count)
+            _playerSpentTimePhase.TryAdd(playerID, _maxTimer - _phaseTimer);
+            CheckIfPlayersFinishedGame();
+        }
+
+        private void CheckIfPlayersFinishedGame()
+        {
+            if(_playingPlayerCount == 0)
             {
-                _coroutineRunner.StopCoroutine(gameTimerCoroutine);
+                _coroutineRunner.StopCoroutine(_gameTimerCoroutine);
+                _gameData.GameState = GameState.PlayerSelection;
+                return;
+            }
+
+            if (_playerConfirmed.Count == _playingPlayerCount)
+            {
+                _coroutineRunner.StopCoroutine(_gameTimerCoroutine);
                 _coroutineRunner.StartCoroutine(CompletePhase());
+            }
+        }
+
+        private void OnPlayerQuit(int playerID)
+        {
+            List<PlayerData> players = _gameData.Players;
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (players[i].ID != playerID)
+                {
+                    continue;
+                }
+                players[i].HasQuitted = true;
+                _viewSlots[i].SetPlayerQuit();
+                _playingPlayerCount--;
+                CheckIfPlayersFinishedGame();
             }
         }
 
@@ -220,7 +253,7 @@ namespace Minigames
                     player.Score += score;
                     if(!_playerSpentTimePhase.TryGetValue(player.ID, out var spentTime))
                     {
-                        spentTime = maxTimer;
+                        spentTime = _maxTimer;
                     }
                     player.TimeSpent += spentTime;
                 }

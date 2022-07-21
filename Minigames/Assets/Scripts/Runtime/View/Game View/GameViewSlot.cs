@@ -27,6 +27,13 @@ namespace Minigames
         [SerializeField] private GameObject _counterParent;
         [SerializeField] private TextMeshProUGUI _counterText;
         [SerializeField] private TextMeshProUGUI _gameTimer;
+        [SerializeField] private Button _exitButton;
+        [SerializeField] private RectTransform _exitConfirmation;
+        [SerializeField] private Button _exitConfirmButton;
+        [SerializeField] private Button _exitCancelButton;
+        [SerializeField] private RectTransform _quittedScreen;
+        [SerializeField] private TextMeshProUGUI _quittedScreenText;
+        [SerializeField] private Image _quittedBackground;
 
         private int _playerId;
         private PoolUtility _slotPool;
@@ -37,6 +44,7 @@ namespace Minigames
         private List<Slot> _slotsObjects;
         private List<Item> _availableItems;
         private UnityAction<int> _onConfirmButton;
+        private UnityAction<int> _onExitConfirmButton;
         private bool _gameEnded;
         private bool _hasBlocker;
 
@@ -70,6 +78,16 @@ namespace Minigames
 
         public override void UpdateView(GameViewSlotData viewData)
         {
+            if(viewData.PlayerQuitted)
+            {
+                _quittedScreen.gameObject.SetActive(true);
+                _quittedBackground.sprite = viewData.BackgroundImage;
+                _quittedScreenText.text = $"{viewData.PlayerName} desistiu!";
+                ClearItems();
+                ClearSlots();
+                return;
+            }
+            _quittedScreen.gameObject.SetActive(false);
             _gameViewCamera.rect = viewData.CameraData;
             _backgroundImage.sprite = viewData.BackgroundImage;
             _confirmButtonBackground.sprite = viewData.BackgroundImage;
@@ -95,10 +113,21 @@ namespace Minigames
 
             //slotObj.ConfigureSlot(index);
             _confirmButton.interactable = true;
-            ConfigureButton();
+            ConfigureConfirmButton();
+            ConfigureExit();
             _onConfirmButton = viewData.OnConfirmClick;
+            _onExitConfirmButton = viewData.OnPlayerQuit;
             GameEnded = false;
             _hasBlocker = false;
+        }
+
+        public void SetPlayerQuit()
+        {
+            _quittedScreen.gameObject.SetActive(true);
+            _quittedBackground.sprite = _backgroundImage.sprite;
+            _quittedScreenText.text = $"{_playerName.text} desistiu!";
+            ClearItems();
+            ClearSlots();
         }
 
         public void UpdateBlockCounter(bool isActive, int value = 0)
@@ -113,7 +142,7 @@ namespace Minigames
             _gameTimer.text = $"{value}";
         }
 
-        public void ConfigureButton()
+        public void ConfigureConfirmButton()
         {
             _confirmButton.onClick.RemoveAllListeners();
             for (int i = 0; i < _availableItems.Count; i++)
@@ -127,6 +156,37 @@ namespace Minigames
             }
             _confirmButton.onClick.AddListener(OnConfirButtonClick);
             _confirmButton.gameObject.SetActive(true);
+        }
+
+        public void ConfigureExit()
+        {
+            _exitButton.onClick.RemoveAllListeners();
+            _exitConfirmButton.onClick.RemoveAllListeners();
+            _exitCancelButton.onClick.RemoveAllListeners();
+
+            _exitButton.onClick.AddListener(OnClickExitButton);
+            _exitConfirmButton.onClick.AddListener(OnClickExitConfirmButton);
+            _exitCancelButton.onClick.AddListener(OnClickExitCancelButton);
+
+
+            _exitConfirmation.gameObject.SetActive(false);
+        }
+
+        private void OnClickExitCancelButton()
+        {
+            _hasBlocker = false;
+            _exitConfirmation.gameObject.SetActive(false);
+        }
+
+        private void OnClickExitConfirmButton()
+        {
+            _onExitConfirmButton?.Invoke(_playerId);
+        }
+
+        private void OnClickExitButton()
+        {
+            _hasBlocker = true;
+            _exitConfirmation.gameObject.SetActive(true);
         }
 
         public int ShowResults()

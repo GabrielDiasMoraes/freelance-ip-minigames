@@ -17,5 +17,7 @@ namespace Minigames
         public string PlayerName;
         public float CanvasRotationZ;
         public UnityAction<int> OnConfirmClick;
+        public UnityAction<int> OnPlayerQuit;
+        public bool PlayerQuitted;
     }
 }
