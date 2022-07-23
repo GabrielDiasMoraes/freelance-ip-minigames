@@ -44,7 +44,7 @@ namespace Minigames
             {
                 var playerData = _gameData.Players[i];
 
-                _iconMap.PlayerIcons.TryGetValue(playerData.ID, out var sprite);
+                var sprite = _iconMap.PlayerIcons[playerData.PlayerIconID];
 
                 playerResultInfos[i] = new PlayerResultInfo
                 {

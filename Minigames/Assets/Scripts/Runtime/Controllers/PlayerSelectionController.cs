@@ -6,14 +6,37 @@ namespace Minigames
 {
     public class PlayerSelectionController : IController
     {
+
+        public enum SelectionPhase
+        {
+            PlayerQuantitySelection,
+            PlayerIconSelection
+        }
+
         private GameData _gameData;
         public UnityAction OnEnable { get; set; }
         public UnityAction OnDispatch { get; set; }
         public UnityAction OnPlayerListChange { get; set; }
 
+        public UnityAction<SelectionPhase> OnSelectionPhaseChange { get; set; }
+
         public List<PlayerData> Players => _gameData.Players;
 
+        public SelectionPhase CurrentPhase { get => _currentPhase;
+            set
+            {
+                if (value == _currentPhase)
+                    return;
+                _currentPhase = value;
+                OnSelectionPhaseChange?.Invoke(_currentPhase);
+            }
+        }
+
         public List<int> PlayerIds;
+
+        private SelectionPhase _currentPhase;
+
+        private int _playerWithIconSelected;
 
         public PlayerSelectionController(GameData gameData)
         {
@@ -39,6 +62,8 @@ namespace Minigames
         public void EnableController()
         {
             PlayerIds = new List<int>() { 0, 1, 2, 3, 4, 5 };
+            _currentPhase = SelectionPhase.PlayerQuantitySelection;
+            _playerWithIconSelected = 0;
             _gameData.InitOrReset();
             if(Players.Count == 0)
             {
@@ -62,26 +87,13 @@ namespace Minigames
             {
                 ID = id,
                 Name = $"Jogador {count + 1}",
-                Score = 0
+                Score = 0,
+                PlayerIconID = -1,
             };
 
             Players.Add(newPlayer);
             OnPlayerListChange?.Invoke();
         }
-
-        public void UpdatePlayerName(int playerID, string newText)
-        {
-            for (int i = 0; i < Players.Count; i++)
-            {
-                var player = Players[i];
-                if (player.ID == playerID)
-                {
-                    player.Name = newText;
-                }
-            }
-        }
-
-
 
         private int GetID()
         {
@@ -108,8 +120,19 @@ namespace Minigames
 
         public void Continue()
         {
+            if(CurrentPhase == SelectionPhase.PlayerQuantitySelection)
+            {
+                CurrentPhase = SelectionPhase.PlayerIconSelection;
+                return;
+            }
             _gameData.GameState = GameState.Game;
         }
+
+        public void SelectCurrentIcon(int playerIndex, int iconID)
+        {
+            Players[playerIndex].PlayerIconID = iconID;
+        }
+
     }
 
 }

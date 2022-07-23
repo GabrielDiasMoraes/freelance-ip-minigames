@@ -12,6 +12,7 @@ namespace Minigames
     {
         [SerializeField] GameItemsData _gameItems;
         [SerializeField] private List<LevelData> _levelDataArray;
+        [SerializeField] private Color[] _playerColor;
 
         private GameState _gameState;
         private List<PlayerData> _players = new List<PlayerData>();
@@ -46,6 +47,7 @@ namespace Minigames
         public int CorrectResultTimer { get => _correctResultTimer; set => _correctResultTimer = value; }
 
         public int PlayerResultTimer { get => _playerResultTimer; set => _playerResultTimer = value; }
+        public Color[] PlayerColor { get => _playerColor; }
 
         public bool TryNextPhase()
         {
@@ -113,6 +115,7 @@ namespace Minigames
         public int Score;
         public float TimeSpent;
         public bool HasQuitted;
+        public int PlayerIconID;
     }
 
     [Serializable]

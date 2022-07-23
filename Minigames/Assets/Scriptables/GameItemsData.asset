@@ -15,81 +15,81 @@ MonoBehaviour:
   _gameItems:
   - Name: Aquecedor de ambiente
     AvgMonthConsumption: 386.88
-    ItemImage: {fileID: 21300000, guid: 3a33ec39ffc428242996716b2747bce9, type: 3}
+    ItemImage: {fileID: 21300000, guid: 605e2af96aba4e941ad84e0a15a01feb, type: 3}
     UsagePerDay: 8 horas
   - Name: "Fog\xE3o el\xE9trico"
     AvgMonthConsumption: 274.2
-    ItemImage: {fileID: 21300000, guid: 84a56713e29e4b8489d8411810333236, type: 3}
+    ItemImage: {fileID: 21300000, guid: e03d7d164742021458733109d6a829b1, type: 3}
     UsagePerDay: 1 hora
   - Name: Ar-condicionado
     AvgMonthConsumption: 128.8
-    ItemImage: {fileID: 21300000, guid: d02e22f70758a2c4aa54084624222a88, type: 3}
+    ItemImage: {fileID: 21300000, guid: e310c81a2c305de4d9d9de364cccd685, type: 3}
     UsagePerDay: 8 horas
   - Name: "Chuveiro el\xE9trico"
     AvgMonthConsumption: 88
-    ItemImage: {fileID: 21300000, guid: accacf12670facd48a1ddd88df494c0b, type: 3}
+    ItemImage: {fileID: 21300000, guid: 0d57ed55c95e60942bd772d0510d1916, type: 3}
     UsagePerDay: 32 minutos
   - Name: Secadora de roupa
     AvgMonthConsumption: 55.95
-    ItemImage: {fileID: 21300000, guid: 05038602b07358f4e9a8f710b240f7c6, type: 3}
+    ItemImage: {fileID: 21300000, guid: e281d12835b2b744295342dc4da50f04, type: 3}
     UsagePerDay: 1 hora
   - Name: Geladeira
     AvgMonthConsumption: 48.24
-    ItemImage: {fileID: 21300000, guid: ec7b08f68a00868449d8738a00138738, type: 3}
+    ItemImage: {fileID: 21300000, guid: 5d08debee884b0a41ab6e1e23d406891, type: 3}
     UsagePerDay: 24 horas
   - Name: TV LED 42"
     AvgMonthConsumption: 30.45
-    ItemImage: {fileID: 21300000, guid: 88e02d11943dd4c4a8e370ce38a10851, type: 3}
+    ItemImage: {fileID: 21300000, guid: 9ab7fa966b25eb045993ea25e1f6299d, type: 3}
     UsagePerDay: 5 horas
   - Name: Cafeteira expresso
     AvgMonthConsumption: 23.82
-    ItemImage: {fileID: 21300000, guid: eb1ba9dddb3d58348b25ab685345b502, type: 3}
+    ItemImage: {fileID: 21300000, guid: 650c914c25e00464f81e4247b685202f, type: 3}
     UsagePerDay: 1 hora
   - Name: Frigobar
     AvgMonthConsumption: 18.9
-    ItemImage: {fileID: 21300000, guid: 1b48c6450cef5e846a62b077e8e0f025, type: 3}
+    ItemImage: {fileID: 21300000, guid: 24ee7a4371fb88247a2142d886afbbd1, type: 3}
     UsagePerDay: 24 horas
   - Name: "Ferro el\xE9trico (Vapor)"
     AvgMonthConsumption: 18
-    ItemImage: {fileID: 21300000, guid: 42548b468b3264c458278b3f1d169c07, type: 3}
+    ItemImage: {fileID: 21300000, guid: b61eb39c43ccf8c47bada29dcab0ee25, type: 3}
     UsagePerDay: 1 hora
   - Name: Ventilador
     AvgMonthConsumption: 17.28
-    ItemImage: {fileID: 21300000, guid: 4f602f9d129d76c409e884f89b350a14, type: 3}
+    ItemImage: {fileID: 21300000, guid: 2eab66c87c2eed341b34c43ebee6cf97, type: 3}
     UsagePerDay: 8 horas
   - Name: Computador
     AvgMonthConsumption: 15.12
-    ItemImage: {fileID: 21300000, guid: 8acc689913c9d854b9ff3f34749ccc8b, type: 3}
+    ItemImage: {fileID: 21300000, guid: ff55563645c1b4744ae78bdf9818bcb9, type: 3}
     UsagePerDay: 8 horas
   - Name: "L\xE2mpada incandescente "
     AvgMonthConsumption: 15
-    ItemImage: {fileID: 21300000, guid: dbfe947e15ffccc4c86bb4f23c33470d, type: 3}
+    ItemImage: {fileID: 21300000, guid: 73c8cf842bcca5040b0a8426add593f3, type: 3}
     UsagePerDay: 5 horas
   - Name: Forno micro-ondas
     AvgMonthConsumption: 13.98
-    ItemImage: {fileID: 21300000, guid: d70daf046d812dd4c8b71373d1b6c074, type: 3}
+    ItemImage: {fileID: 21300000, guid: fa5afb75b252fae4e928708efcd38966, type: 3}
     UsagePerDay: 20 minutos
   - Name: "Ferro el\xE9trico (Seco)"
     AvgMonthConsumption: 6
-    ItemImage: {fileID: 21300000, guid: e31de1cc4eaad1b499d1954a43e47d2c, type: 3}
+    ItemImage: {fileID: 21300000, guid: 79176b7e0b1168b419f1540df65dee63, type: 3}
     UsagePerDay: 1 hora
   - Name: Modem de internet
     AvgMonthConsumption: 5.76
-    ItemImage: {fileID: 21300000, guid: 204c515869350f7449d11b1d0eac1cbf, type: 3}
+    ItemImage: {fileID: 21300000, guid: 06dcded40892cb847bfa1f51f0a302b3, type: 3}
     UsagePerDay: 24 horas
   - Name: Secador de cabelo
     AvgMonthConsumption: 5.21
-    ItemImage: {fileID: 21300000, guid: ae8567013ac47ec409f3c77402a45a24, type: 3}
+    ItemImage: {fileID: 21300000, guid: 63a341140f02b9742956ea8f8c29a21e, type: 3}
     UsagePerDay: 10 minutos
   - Name: Lavadora de roupas
     AvgMonthConsumption: 4.4
-    ItemImage: {fileID: 21300000, guid: 44ceb0b5196cfab4e8514ef709f9e679, type: 3}
+    ItemImage: {fileID: 21300000, guid: 0208643b0fa3aaa499e039d48be8c04e, type: 3}
     UsagePerDay: 1 hora
   - Name: "Radio rel\xF3gio"
     AvgMonthConsumption: 3.6
-    ItemImage: {fileID: 21300000, guid: 1f4691d9215415c47b9ea8d52d7ba2f5, type: 3}
+    ItemImage: {fileID: 21300000, guid: 40442b2af43a5704daecd94ece0a5049, type: 3}
     UsagePerDay: 24 horas
   - Name: "L\xE2mpada fluorescente"
     AvgMonthConsumption: 2.25
-    ItemImage: {fileID: 21300000, guid: cac999dc129552f44964e72860e4ee59, type: 3}
+    ItemImage: {fileID: 21300000, guid: 73c8cf842bcca5040b0a8426add593f3, type: 3}
     UsagePerDay: 5 horas

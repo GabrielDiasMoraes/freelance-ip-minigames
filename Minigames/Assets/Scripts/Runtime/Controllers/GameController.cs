@@ -116,10 +116,7 @@ namespace Minigames
                     _viewData.BackgroundButtonImage = buttonBackground;
                 }
 
-                if (_iconMap.PlayerIcons.TryGetValue(playerData.ID, out var icon))
-                {
-                    _viewData.PlayerIcon = icon;
-                }
+                _viewData.PlayerIcon = _iconMap.PlayerIcons[playerData.PlayerIconID];
                 _viewData.PlayerID = playerData.ID;
                 _viewData.PlayerName = playerData.Name;
                 _viewData.PlayerQuitted = playerData.HasQuitted;

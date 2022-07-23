@@ -20,3 +20,10 @@ MonoBehaviour:
     levelTime: 30
   - amountOfItems: 7
     levelTime: 30
+  _playerColor:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0.44359136, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0.049598217, b: 1, a: 1}
+  - {r: 1, g: 0.99197686, b: 0, a: 1}
+  - {r: 0.617486, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0.40866065, b: 0, a: 1}

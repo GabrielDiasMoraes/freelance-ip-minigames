@@ -13,31 +13,23 @@ MonoBehaviour:
   m_Name: IconMap
   m_EditorClassIdentifier: 
   _playerIcons:
-  - Key: 0
-    Value: {fileID: 21300000, guid: a0e86549aa6975546ac2fbdb5abe421b, type: 3}
-  - Key: 1
-    Value: {fileID: 21300000, guid: fe81c51ad7273814ba37acb6904a9a51, type: 3}
-  - Key: 2
-    Value: {fileID: 21300000, guid: 32338e7ab4fa34f4e8cbda162fd5f6fa, type: 3}
-  - Key: 3
-    Value: {fileID: 21300000, guid: 7aa3f78f6505fa845a64210251c2fc91, type: 3}
-  - Key: 4
-    Value: {fileID: 21300000, guid: 13ef0f0c5b4ec954da06f6f209a1f99a, type: 3}
-  - Key: 5
-    Value: {fileID: 21300000, guid: 18430f4517219354a807678ff6e9beb5, type: 3}
+  - {fileID: 21300000, guid: 436d702ea8946054583863753efe76ca, type: 3}
+  - {fileID: 21300000, guid: ff08256e6f7711148b2b6d8befcb0208, type: 3}
+  - {fileID: 21300000, guid: 640724afc6cb47d49857a1be116a9661, type: 3}
+  - {fileID: 21300000, guid: 14323a44c8704a445931bff8bf3ea768, type: 3}
   _playerBackground:
   - Key: 0
-    Value: {fileID: 21300000, guid: 4ad4ac33214e686468187e4bf1bd1621, type: 3}
+    Value: {fileID: 21300000, guid: 824375d0e7da26d45b82fc74de737465, type: 3}
   - Key: 1
-    Value: {fileID: 21300000, guid: c41f3809f74866c4d8eafac95dc74af3, type: 3}
+    Value: {fileID: 21300000, guid: 2b08ee03f53fcf84fb159ef14878f45e, type: 3}
   - Key: 2
-    Value: {fileID: 21300000, guid: ec81a5f86f82eaf4786b4d968242e087, type: 3}
+    Value: {fileID: 21300000, guid: 824375d0e7da26d45b82fc74de737465, type: 3}
   - Key: 3
-    Value: {fileID: 21300000, guid: bb457fdb3d9a2cf419bab65444802dd8, type: 3}
+    Value: {fileID: 21300000, guid: 2b08ee03f53fcf84fb159ef14878f45e, type: 3}
   - Key: 4
-    Value: {fileID: 21300000, guid: 1ea9f4039bebf564a95f88fcd241db19, type: 3}
+    Value: {fileID: 21300000, guid: 824375d0e7da26d45b82fc74de737465, type: 3}
   - Key: 5
-    Value: {fileID: 21300000, guid: f749d6f5fe71dcf48beb9d9045cee173, type: 3}
+    Value: {fileID: 21300000, guid: 2b08ee03f53fcf84fb159ef14878f45e, type: 3}
   _playerButtonBackground:
   - Key: 0
     Value: {fileID: 0}

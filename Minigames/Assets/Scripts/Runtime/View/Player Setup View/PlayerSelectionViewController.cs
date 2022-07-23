@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Minigames
 {
@@ -22,7 +22,8 @@ namespace Minigames
             _playerSelectionController.OnEnable += OnControllerEnable;
             _playerSelectionController.OnDispatch += OnControllerDispatch;
             _playerSelectionController.OnPlayerListChange += OnPlayerListChange;
-            _playerViewData.ViewType = PlayerSelectionViewType.MainView;
+            _playerSelectionController.OnSelectionPhaseChange += OnSelectionPhaseChange;
+            _playerViewData.ViewType = PlayerSelectionViewType.PlayerQuantityView;
             _playerViewData.OnPlusClicked += _playerSelectionController.AddNewPlayer;
             _playerViewData.OnMinusClicked += _playerSelectionController.RemovePlayer;
             _playerViewData.OnConfirmClicked += _playerSelectionController.Continue;
@@ -32,12 +33,38 @@ namespace Minigames
             _playerViewData.CorrectResultTimeShow = _gameData.CorrectResultTimer;
             _playerViewData.ResultTimeShow = _gameData.PlayerResultTimer;
             _playerViewData.OnBackClicked += OnBackClicked;
+            _playerViewData.IconList = _iconMap.PlayerIcons;
+        }
+
+        private void OnSelectionPhaseChange(PlayerSelectionController.SelectionPhase currentPhase)
+        {
+            _playerViewData.ViewType = PlayerSelectionViewType.PlayerIconSelectView;
+            _playerViewData.OnConfirmClicked -= _playerSelectionController.Continue;
+            _playerViewData.OnConfirmClicked += SelectCurrentIcon;
+            _playerViewData.SelectedIcon = -1;
+            _playerViewData.CurrentPlayerIndex = 0;
+            _playerViewData.CurrentPlayerColor = _gameData.PlayerColor[_playerViewData.CurrentPlayerIndex];
+            _view.UpdateView(_playerViewData);
+        }
+
+        private void SelectCurrentIcon()
+        {
+            _playerSelectionController.SelectCurrentIcon(_playerViewData.CurrentPlayerIndex, _view.GetSelectedIcon());
+            _playerViewData.CurrentPlayerIndex++;
+            if (_playerViewData.CurrentPlayerIndex >= _playerSelectionController.Players.Count)
+            {
+                _playerSelectionController.Continue();
+                return;
+            }
+            _playerViewData.CurrentPlayerColor = _gameData.PlayerColor[_playerViewData.CurrentPlayerIndex];
+            _playerViewData.SelectedIcon = -1;
+            _view.UpdateView(_playerViewData);
         }
 
         private void OnBackClicked()
         {
             _playerViewData = _view.GetViewData();
-            _playerViewData.ViewType = PlayerSelectionViewType.MainView;
+            _playerViewData.ViewType = PlayerSelectionViewType.PlayerQuantityView;
             if (_playerSelectionController.Players.Count > _playerViewData.MaxPlayers)
             {
                 int difference = _playerSelectionController.Players.Count - _playerViewData.MaxPlayers;
@@ -82,23 +109,12 @@ namespace Minigames
 
         private void ConfigurePlayers(List<PlayerData> players)
         {
-            _playerViewData.PlayersInfo = new PlayerInfo[players.Count];
+            _playerViewData.PlayersIds = new int[players.Count];
 
             for (int i = 0; i < players.Count; i++)
             {
-                PlayerInfo playerInfo = _playerViewData.PlayersInfo[i];
                 PlayerData playerData = players[i];
-
-                if (!_iconMap.PlayerIcons.TryGetValue(playerData.ID, out var sprite))
-                {
-                    throw new Exception("No Icon for that Player ID");
-                }
-
-                playerInfo.PlayerID = playerData.ID;
-                playerInfo.PlayerName = playerData.Name;
-                playerInfo.PlayerIcon = sprite;
-                playerInfo.OnChangeText += _playerSelectionController.UpdatePlayerName;
-                _playerViewData.PlayersInfo[i] = playerInfo;
+                _playerViewData.PlayersIds[i] = playerData.ID;
             }
         }
 

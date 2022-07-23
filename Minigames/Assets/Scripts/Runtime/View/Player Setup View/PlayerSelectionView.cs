@@ -8,12 +8,15 @@ namespace Minigames
 {
     public class PlayerSelectionView : ViewBase<PlayerSelectionViewData>
     {
-        [SerializeField] private PlayerCard _playerCardPrefab;
+        [SerializeField] private IconCard _playerCardPrefab;
         [SerializeField] private LevelInfoView _levelInfoCardPrefab;
         [Header("Main View")]
         [SerializeField] private GameObject _mainViewRoot;
-        [SerializeField] private Transform _playerListRoot;
+        [SerializeField] private RectTransform _playerListRoot;
+        [SerializeField] private RectTransform _playerListContentRoot;
         [SerializeField] private TextMeshProUGUI _playerCount;
+        [SerializeField] private TextMeshProUGUI _playerInfoIconText;
+        [SerializeField] private GameObject _buttonsRoot;
         [SerializeField] private Button _minusButton;
         [SerializeField] private Button _plusButton;
         [SerializeField] private Button _confirmButton;
@@ -37,9 +40,9 @@ namespace Minigames
         [SerializeField] private RectTransform _levelListRoot;
         [SerializeField] private Button _addNewLevel;
 
-        private PoolUtility _cardPool;
+        private PoolUtility _iconCardPool;
         private PoolUtility _levelPool;
-        private List<PlayerCard> _activePlayerCards;
+        private List<IconCard> _activeIconCards;
         private List<LevelInfoView> _activeLevelCards;
         private PlayerSelectionViewData _viewData;
 
@@ -69,22 +72,44 @@ namespace Minigames
         public override void UpdateView(PlayerSelectionViewData viewData)
         {
             _viewData = viewData;
-            if (_viewData.ViewType == PlayerSelectionViewType.MainView)
+            switch (_viewData.ViewType)
             {
-                _mainViewRoot.SetActive(true);
-                _configViewRoot.SetActive(false);
-                ConfigurePlayerCards();
-                ConfigureMainButtons();
-                _playerCount.text = _viewData.PlayersInfo.Length.ToString();
+                case PlayerSelectionViewType.PlayerQuantityView:
+                    _mainViewRoot.SetActive(true);
+                    _configViewRoot.SetActive(false);
+                    _buttonsRoot.SetActive(true);
+                    _playerListRoot.gameObject.SetActive(false);
+                    ConfigureMainButtons();
+                    _playerCount.text = _viewData.PlayersIds.Length.ToString();
+                    break;
+                case PlayerSelectionViewType.PlayerIconSelectView:
+                    _mainViewRoot.SetActive(true);
+                    _configViewRoot.SetActive(false);
+                    _buttonsRoot.SetActive(false);
+                    _playerListRoot.gameObject.SetActive(true);
+                    float contentWidht = Mathf.Max(400 * viewData.PlayersIds.Length, _playerListRoot.sizeDelta.x);
+                    _playerListContentRoot.sizeDelta = new Vector2(contentWidht, 300);
+                    _playerInfoIconText.text = $"<nobr>Jogador {_viewData.CurrentPlayerIndex + 1} Toque e escolha o seu avatar!";
+                    ConfigureIconCards();
+                    UpdateArrowIndicator();
+                    ConfigureMainButtons();
+                    break;
+                case PlayerSelectionViewType.ConfigView:
+                    _mainViewRoot.SetActive(false);
+                    _configViewRoot.SetActive(true);
+                    ConfigureConfigButtons();
+                    ConfigureMaxPlayerText();
+                    ConfigurePlayerScoreTime();
+                    ConfigureCorrectResultTime();
+                    ConfigureLevelCards();
+                    break;
+            }
+            if (_viewData.ViewType == PlayerSelectionViewType.PlayerQuantityView)
+            {
+                
                 return;
             }
-            _mainViewRoot.SetActive(false);
-            _configViewRoot.SetActive(true);
-            ConfigureConfigButtons();
-            ConfigureMaxPlayerText();
-            ConfigurePlayerScoreTime();
-            ConfigureCorrectResultTime();
-            ConfigureLevelCards();
+            
         }
 
         private void ConfigureLevelCards()
@@ -113,9 +138,9 @@ namespace Minigames
 
         private void Awake()
         {
-            _cardPool = new PoolUtility(_playerCardPrefab, 5, _playerListRoot);
+            _iconCardPool = new PoolUtility(_playerCardPrefab, 5, _playerListContentRoot);
             _levelPool = new PoolUtility(_levelInfoCardPrefab, 3, _levelListRoot);
-            _activePlayerCards = new List<PlayerCard>();
+            _activeIconCards = new List<IconCard>();
             _activeLevelCards = new List<LevelInfoView>();
         }
 
@@ -128,22 +153,39 @@ namespace Minigames
             cards.Clear();
         }
 
-        private void ConfigurePlayerCards()
+        private void ConfigureIconCards()
         {
-            ClearCards(_activePlayerCards);
-            var playersInfo = _viewData.PlayersInfo;
-            for (int i = 0; i < playersInfo.Length; i++)
+            ClearCards(_activeIconCards);
+            var iconList = _viewData.IconList;
+            for (int i = 0; i < iconList.Length; i++)
             {
-                PlayerInfo item = playersInfo[i];
-                PlayerCard playerCard = (PlayerCard) _cardPool.GetFromPool();
-                playerCard.Configure(item.PlayerIcon, item.PlayerName, item.OnChangeText, item.PlayerID);
-                playerCard.gameObject.SetActive(true);
-                playerCard.transform.SetSiblingIndex(i);
-                _activePlayerCards.Add(playerCard);
+                var iconSprite = iconList[i];
+                IconCard iconCard = (IconCard) _iconCardPool.GetFromPool();
+                iconCard.Configure(iconSprite, i, _viewData.CurrentPlayerColor, OnIconClicked);
+                iconCard.gameObject.SetActive(true);
+                iconCard.transform.SetSiblingIndex(i);
+                _activeIconCards.Add(iconCard);
             }
         }
 
+        private void OnIconClicked(int iconIndex)
+        {
+            _viewData.SelectedIcon = iconIndex;
+            UpdateArrowIndicator();
+        }
         
+        public int GetSelectedIcon()
+        {
+            return _viewData.SelectedIcon;
+        }
+
+        private void UpdateArrowIndicator()
+        {
+            for (int i = 0; i < _activeIconCards.Count; i++)
+            {
+                _activeIconCards[i].EnableArrow(_viewData.SelectedIcon == i);
+            }
+        }
 
         private void ConfigureMainButtons()
         {
@@ -157,9 +199,9 @@ namespace Minigames
             _confirmButton.onClick.AddListener(_viewData.OnConfirmClicked);
             _configButton.onClick.AddListener(_viewData.OnConfigClicked);
 
-            _minusButton.interactable = _viewData.PlayersInfo.Length > 1;
+            _minusButton.interactable = _viewData.PlayersIds.Length > 1;
 
-            _plusButton.interactable = _viewData.PlayersInfo.Length < _viewData.MaxPlayers;
+            _plusButton.interactable = _viewData.PlayersIds.Length < _viewData.MaxPlayers;
         }
 
         private void ConfigureConfigButtons()

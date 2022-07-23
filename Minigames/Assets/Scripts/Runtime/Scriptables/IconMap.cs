@@ -9,7 +9,7 @@ namespace Minigames
     public class IconMap : ScriptableObject
     {
         [SerializeField]
-        private KeyValuePair<int, Sprite>[] _playerIcons;
+        private Sprite[] _playerIcons;
 
         [SerializeField]
         private KeyValuePair<int, Sprite>[] _playerBackground;
@@ -17,11 +17,12 @@ namespace Minigames
         [SerializeField]
         private KeyValuePair<int, Sprite>[] _playerButtonBackground;
 
-        public KeyValuePair<int, Sprite>[] PlayerIcons => _playerIcons;
+        public Sprite[] PlayerIcons => _playerIcons;
 
         public KeyValuePair<int, Sprite>[] PlayerBackground => _playerBackground;
 
         public KeyValuePair<int, Sprite>[] PlayerButtonBackground => _playerButtonBackground;
+
     }
 
     [Serializable]

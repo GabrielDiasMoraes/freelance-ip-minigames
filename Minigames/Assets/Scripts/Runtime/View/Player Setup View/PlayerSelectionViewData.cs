@@ -10,11 +10,16 @@ namespace Minigames
     {
         public PlayerSelectionViewType ViewType;
         //Main View
-        public PlayerInfo[] PlayersInfo;
+        public int[] PlayersIds;
         public UnityAction OnPlusClicked;
         public UnityAction OnMinusClicked;
         public UnityAction OnConfirmClicked;
         public UnityAction OnConfigClicked;
+        // Icon Select View
+        public int SelectedIcon;
+        public Sprite[] IconList;
+        public Color CurrentPlayerColor;
+        public int CurrentPlayerIndex;
         // Config View
         public int MaxPlayers;
         public int ResultTimeShow;
@@ -26,16 +31,8 @@ namespace Minigames
     [Serializable]
     public enum PlayerSelectionViewType
     {
-        MainView,
+        PlayerQuantityView,
+        PlayerIconSelectView,
         ConfigView,
-    }
-
-    [Serializable]
-    public struct PlayerInfo
-    {
-        public int PlayerID;
-        public string PlayerName;
-        public Sprite PlayerIcon;
-        public UnityAction<int, string> OnChangeText;
     }
 }
